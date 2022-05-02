@@ -29,6 +29,7 @@ If you have an available ROS Noetic system, you can quickly install and run Proj
     rosdep install --from-paths . --ignore-src -r -y
 
     cd ..
+    source /opt/ros/noetic/setup.bash
     catkin_make
     
     source devel/setup.bash
