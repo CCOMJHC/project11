@@ -14,7 +14,6 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <exec_depend>command_bridge</exec_depend>
-  <depend>geographic_visualization_msgs</depend>
   <exec_depend>udp_bridge</exec_depend>
 <!--   <exec_depend>dubins_curves</exec_depend> -->
 
