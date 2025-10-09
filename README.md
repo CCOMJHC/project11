@@ -25,20 +25,20 @@ Once ROS2 Jazzy is installed, you can quickly install and run Project11 with the
     git clone https://github.com/CCOMJHC/project11.git -b jazzy
 
     # If rosdep is not installed:
-    # sudo apt-get install python3-rosdep 
+    # sudo apt-get install python3-rosdep
     sudo rosdep init
     rosdep update
 
     # If vcs is not installed:
-    # sudo apt-get install python3-vcstool   
+    # sudo apt-get install python3-vcstool
     vcs import < project11/config/repos/simulator.repos
-    
+
     rosdep install --from-paths . --ignore-src -r -y
 
     cd ..
     source /opt/ros/jazzy/setup.bash
     colcon build --symlink-install
-    
+
     source install/setup.bash
 
     # download nautical charts
@@ -53,7 +53,7 @@ Once ROS2 Jazzy is installed, you can quickly install and run Project11 with the
 Two windows should appear, CAMP and RViz. RViz can seem to freeze when loading the robot model. Be patient.
 
 In the CAMP window, zoom out with the mouse wheel to find the boat. Right click on a target area and select "Hover here" to have the boat go into autonomous mode, transit to the location, and hover in place once it gets there.
-    
+
 ## Major components and concepts
 
 A typical setup has a ROS nodes running on the robot with some key nodes including the `mission_manager`, the `helm_manager` and the `udp_bridge`. The operator station also runs  a `udp_bridge` node as well as `camp`, the CCOM Autonomous Mission Planner which provide a planning and monitoring interface.
@@ -78,7 +78,7 @@ The [Helm Manager](../../../helm_manager) controls which commands get sent to th
 
 ### Piloting modes
 
-Project11 operates in 3 major piloting modes: "manual", "autonomous" and "standby". 
+Project11 operates in 3 major piloting modes: "manual", "autonomous" and "standby".
 
 In "manual" mode, the vehicle responds to commands sent from a device such as a joystick or a gamepad. The commands are converted to "helm" messages by the `joy_to_helm` node and are sent from the operator station to the vehicle via the `udp_bridge`.
 
@@ -91,4 +91,25 @@ The "standby" mode is used to when no control commands are to be sent by Project
 ### Navigation Stack
 
 The `mission_manager` receives and executes the higher level missions. Depending on the task, track lines may be sent to the `path_follower` or another node will receive a higher level directive, such as "survey this area", and generate and send out track lines or other navigation segments to lower level planners or controllers.
-Eventually, a "helm" or "cmd_velocity" message gets sent to the autonomous/helm or autonomous/cmd_vel topic reaching the `helm_manager`. 
+Eventually, a "helm" or "cmd_velocity" message gets sent to the autonomous/helm or autonomous/cmd_vel topic reaching the `helm_manager`.
+
+## Docker
+
+Build image:
+```Bash
+docker build -t project11 .
+```
+
+Allow access to display:
+```Bash
+xhost +local:root
+```
+
+Run image:
+```Bash
+docker run -it --rm  -e DISPLAY=$DISPLAY  -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix -v /etc/localtime:/etc/localtime:ro project11
+```
+
+Run image with nvidia support (needs [nvidia-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)):
+```Bash
+docker run -it --rm --runtime=nvidia --gpus all  -e DISPLAY=$DISPLAY  -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix -v /etc/localtime:/etc/localtime:ro project11
